@@ -5,16 +5,18 @@ const { Item } = Form
 class Login extends Component{
     handleSubmit = (e)=>{
         e.preventDefault()
-        const { validateFields } = this.props.from
-        validateFields((err,values)=>{
-            console.log("err",err)
-            if(values){
-                console.log("values",values)
-            }
-        })
+         this.props.form.validateFields((err,values)=>{
+             if (!err) {
+                 console.log('Received values of form: ', values);
+             }
+         })
+
     }
     validatePwd = (rule,value,call) =>{
-
+        if(value.length < 4){
+            call("密码长度必须大于四位")
+        }
+        return call()
     }
 
 
@@ -30,8 +32,7 @@ class Login extends Component{
                         rules:[
                             {required:true,message:"请输入用户名"},
                             {min:4,message:"最小长度是4位"},
-                            {max:16,message:"最大长度是16位"},
-                            {pattern:/^[a-zA-Z0-9_]*$/,message:"必须包含字母数字下划线"}
+                            {max:16,message:"最大长度是16位"}
                             ]
                     })(<Input
                         prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
