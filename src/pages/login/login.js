@@ -1,32 +1,71 @@
 import React ,{ Component }  from "react";
-import { Form ,Input,Icon,Button} from "antd";
+import { Form ,Input,Icon,Button,message} from "antd";
+import {reqLogin} from "@/api/index";
 import "./index.less"
 const { Item } = Form
 class Login extends Component{
+    state = {
+        loading:false
+    }
+    enterLoading = ()=>{
+        this.setState({
+            loading:true
+        })
+    }
     handleSubmit = (e)=>{
         e.preventDefault()
          this.props.form.validateFields((err,values)=>{
-             if (!err) {
-                 console.log('Received values of form: ', values);
+             if (err) {
+                 return
              }
+             this.setState({
+                 loading:true
+             })
+             reqLogin()
+            // 判断权限
+            if(values.username == "admin"){
+                 values.auth = 1
+            }else{
+                 values.auth = 0
+            }
+
+            localStorage.setItem("user2",JSON.stringify(values))
+
+            setTimeout(()=>{
+                this.enterLoading()
+                message.success("登录成功")
+                console.log("this.props",this.props)
+                this.props.history.push("/")
+
+            },2000)
          })
 
     }
     validatePwd = (rule,value,call) =>{
-        if(value.length < 4){
+        if(typeof  value  == 'undefined' || value.length < 4){
             call("密码长度必须大于四位")
         }
-        return call()
+         call()
     }
 
 
     render() {
         const { getFieldDecorator }  = this.props.form
+        const tailFromItemLayout  = {
+            wrapperCol:{
+                lg:{
+                    span:24
+                },
+                sm:{
+                    span:12
+                }
+            }
+        }
          return<div className="login-wrap">
             <p>
                 React项目:后台管理系统
             </p>
-            <Form className="login-form" onSubmit={this.handleSubmit} wrapperCol={{xs:{span:24},sm:{span:6,offset:9}}}>
+            <Form className="login-form" onSubmit={this.handleSubmit} {...tailFromItemLayout} >
                 <Item>
                     {getFieldDecorator("username",{
                         rules:[
@@ -51,8 +90,8 @@ class Login extends Component{
                         />
                     )}
                 </Item>
-                <Item wrapperCol={{ span: 6, offset: 9 }}>
-                    <Button type="primary" htmlType="submit" className="login-form-button">
+                <Item>
+                    <Button type="primary" loading={this.state.loading} htmlType="submit" className="login-form-button">
                         登录
                     </Button>
                 </Item>
