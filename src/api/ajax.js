@@ -1,15 +1,22 @@
 import axios from "axios"
+import { message } from "antd"
+
+
+
 
 const ajax = (url,data={},method="get")=>{
+    return new Promise((resolve,reject)=>{
+        let promoise ="";
         if(method == "get" ){
-            return axios.get(url,{
-                params:{
-                    data
-                }
-            })
+            promoise = axios.get(url,{params:{data}})
         }else{
-            return axios.post(url,data)
+            promoise = axios.post(url,data)
         }
+
+        promoise.catch(err=>message.error(errr))
+
+    })
+
 }
 
 export default ajax

@@ -1,5 +1,6 @@
 import React ,{ Component }  from "react";
 import { Form ,Input,Icon,Button,message} from "antd";
+import { connect } from "react-redux"
 import {reqLogin} from "@/api/index";
 import "./index.less"
 const { Item } = Form
@@ -23,21 +24,11 @@ class Login extends Component{
              })
              reqLogin()
             // 判断权限
-            if(values.username == "admin"){
-                 values.auth = 1
-            }else{
-                 values.auth = 0
-            }
+
 
             localStorage.setItem("user2",JSON.stringify(values))
 
-            setTimeout(()=>{
-                this.enterLoading()
-                message.success("登录成功")
-                console.log("this.props",this.props)
-                this.props.history.push("/")
 
-            },2000)
          })
 
     }
@@ -99,5 +90,17 @@ class Login extends Component{
         </div>
     }
 }
+const mapStatetoProps =(state)=>{
+    return {state:state}
+};
 
-export default Form.create()(Login)
+const mapdispatchtoProps = ()=>{
+    return{
+        login:function (dd) {
+            
+        }
+    }
+}
+
+export default @connect(mapStatetoProps,mapdispatchtoProps)
+Form.create()(Login)
